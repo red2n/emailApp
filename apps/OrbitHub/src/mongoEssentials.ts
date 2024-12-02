@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { FastifyInstance } from 'fastify';
-import logger from './appLogger';
+import logger from './appLogger.js';
 
 export class MongoEssentials {
     static async connectToMongoDB(connectionString: string) {

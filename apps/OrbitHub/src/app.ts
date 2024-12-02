@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { Collection } from 'mongodb';
-import logger from './appLogger';
-import { MongoEssentials } from './mongoEssentials';
-import { KafkaEssentials } from './kafkaEssentials';
-import { getDirectories, getConnectionString, logRoutes } from './utils';
+import logger from './appLogger.js';
+import { MongoEssentials } from './mongoEssentials.js';
+import { KafkaEssentials } from './kafkaEssentials.js';
+import { getDirectories, getConnectionString, logRoutes } from './utils.js';
 import os from 'os';
 
 const SERVICE_NAME = 'Service';
