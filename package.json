@@ -1,0 +1,16 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "lerna": "^8.1.9",
+    "rimraf": "^5.0.5",
+    "copyfiles": "^2.4.1"
+  },
+  "scripts": {
+    "clean-all": "lerna run clean && npx rimraf node_modules",
+    "dist-all": "lerna run dist"
+  }
+}
