@@ -1,16 +1,12 @@
 import { FastifyInstance } from 'fastify';
-import os from 'os';
-import { getDirectories, logRoutes } from './utils.js';
 import { registerRoute } from './appServerRoute.js';
-import { Route } from '@modules/starter';
+import { InboundSyns, Route } from '@modules/starter';
 
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
 const RESPONSE_SENT_MESSAGE = 'Response sent for:';
 const SERVICE_IDLE_MESSAGE = 'Service is idle. Total idle time:';
 const ROUTE_NOT_FOUND_MESSAGE = 'Route not found:';
 const ROUTE_NOT_FOUND_ERROR = 'Route not found';
-const GET_DIRECTORIES_PATH = '/getDirectories';
-const GET_FILES_PATH = '/getFiles';
 
 export class AppServer {
   static setupFastify(app: FastifyInstance, routes: Route[]) {
@@ -36,22 +32,20 @@ export class AppServer {
     for (const route of routes) {
       app.log.info(`Registering ${route.METHOD} ${route.ROUTE_URL}`);
       registerRoute(app, route.METHOD, route.ROUTE_URL, async (_request, reply) => {
-
+        const routeInstance = route as InboundSyns<any, any, any, any>;
+        if (typeof routeInstance.extract === 'function' && typeof routeInstance.respond === 'function') {
+          const response = await routeInstance.extract(_request);
+          if (typeof routeInstance.process === 'function') {
+            const processedResponse = await routeInstance.process(response);
+            reply.send(routeInstance.respond(processedResponse));
+          } else {
+            reply.send(routeInstance.respond(response));
+          }
+        } else {
+          reply.status(500).send({ error: 'Handler method not implemented' });
+        }
       });
     }
-
-    // registerRoute(app, 'GET', GET_DIRECTORIES_PATH, async (_request, reply) => {
-    //   const homeDir = os.homedir();
-    //   const directories = getDirectories(homeDir);
-    //   reply.send(directories);
-    // });
-
-    // registerRoute(app, 'GET', GET_FILES_PATH, async (_request, reply) => {
-    //   const homeDir = os.homedir();
-    //   const directories = getDirectories(homeDir);
-    //   reply.send(directories);
-    // });
-
     const checkIdleTime = () => {
       const currentTime = Date.now();
       const idleTime = currentTime - lastActivityTime;
