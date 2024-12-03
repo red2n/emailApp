@@ -2,15 +2,16 @@
 import { InboundSyns } from '@modules/starter';
 
 export class GetCountries implements InboundSyns<Request, string[], string[], Response> {
-    ROUTE_URL = '/getCountries';
+    ROUTE_URL = '/countries';
     METHOD = 'GET';
-    extraceData = async (request: Request) => {
+    extraceData = (request: Request) => {
         return [];
     };
-    process = async (data: string[]) => {
-        return data;
-    };
-    respond = async (response: string[]) => {
-        return response;
+    respond = (response: string[]) => {
+        const responseObj = new Response(JSON.stringify(response), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return responseObj;
     };
 }
