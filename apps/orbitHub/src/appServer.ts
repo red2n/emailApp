@@ -34,10 +34,9 @@ export class AppServer {
     });
 
     for (const route of routes) {
+      app.log.info(`Registering ${route.METHOD} ${route.ROUTE_URL}`);
       registerRoute(app, route.METHOD, route.ROUTE_URL, async (_request, reply) => {
-        const homeDir = os.homedir();
-        const directories = getDirectories(homeDir);
-        reply.send(directories);
+
       });
     }
 
@@ -76,7 +75,7 @@ export class AppServer {
   static async startFastify(app: FastifyInstance, port: number) {
     try {
       await app.listen({ port });
-      logRoutes(app);
+      //logRoutes(app);
     } catch (err) {
       app.log.error(err);
       process.exit(1);

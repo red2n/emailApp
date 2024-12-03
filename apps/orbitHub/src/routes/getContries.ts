@@ -7,7 +7,7 @@ export class GetCountries implements InboundSyns<Request, string[], string[], Re
     METHOD = HttpMethod.GET;
     TYPE = ROUTETYPE.INBOUND;
     extract = (request: Request): string[] => {
-        return [];
+        return ["india", "usa", "uk"];
     };
     respond = (response: string[]) => {
         const responseObj = new Response(JSON.stringify(response), {
