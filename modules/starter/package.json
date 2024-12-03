@@ -6,13 +6,13 @@
   "engines": {
     "node": ">=20.11"
   },
-  "main": "./dist/app.cjs",
-  "module": "./dist/app.mjs",
+  "main": "./dist/app.js",
+  "module": "./dist/app.js",
   "types": "./dist/app.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/app.mjs",
-      "require": "./dist/app.cjs",
+      "import": "./dist/app.js",
+      "require": "./dist/app.js",
       "types": "./dist/app.d.ts",
       "default": "./dist/app.js"
     }

@@ -1,7 +1,8 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import os from 'os';
 import { getDirectories, logRoutes } from './utils.js';
 import { registerRoute } from './appServerRoute.js';
+import { Route } from '@modules/starter';
 
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
 const RESPONSE_SENT_MESSAGE = 'Response sent for:';
@@ -12,7 +13,7 @@ const GET_DIRECTORIES_PATH = '/getDirectories';
 const GET_FILES_PATH = '/getFiles';
 
 export class AppServer {
-  static setupFastify(app: FastifyInstance) {
+  static setupFastify(app: FastifyInstance, routes: Route[]) {
     let lastActivityTime = Date.now();
     let totalIdleTime = 0;
 
@@ -32,17 +33,25 @@ export class AppServer {
       done();
     });
 
-    registerRoute(app, 'GET', GET_DIRECTORIES_PATH, async (_request, reply) => {
-      const homeDir = os.homedir();
-      const directories = getDirectories(homeDir);
-      reply.send(directories);
-    });
+    for (const route of routes) {
+      registerRoute(app, route.METHOD, route.ROUTE_URL, async (_request, reply) => {
+        const homeDir = os.homedir();
+        const directories = getDirectories(homeDir);
+        reply.send(directories);
+      });
+    }
 
-    registerRoute(app, 'GET', GET_FILES_PATH, async (_request, reply) => {
-      const homeDir = os.homedir();
-      const directories = getDirectories(homeDir);
-      reply.send(directories);
-    });
+    // registerRoute(app, 'GET', GET_DIRECTORIES_PATH, async (_request, reply) => {
+    //   const homeDir = os.homedir();
+    //   const directories = getDirectories(homeDir);
+    //   reply.send(directories);
+    // });
+
+    // registerRoute(app, 'GET', GET_FILES_PATH, async (_request, reply) => {
+    //   const homeDir = os.homedir();
+    //   const directories = getDirectories(homeDir);
+    //   reply.send(directories);
+    // });
 
     const checkIdleTime = () => {
       const currentTime = Date.now();

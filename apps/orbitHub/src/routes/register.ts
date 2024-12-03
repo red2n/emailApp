@@ -5,3 +5,5 @@ import { GetCountries } from "./getContries.js";
 const routes: Route[] = [
     new GetCountries()
 ];
+
+export { routes };

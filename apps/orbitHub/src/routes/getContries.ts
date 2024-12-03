@@ -1,9 +1,10 @@
 
-import { InboundSyns, Route, ROUTETYPE } from '@modules/starter';
+import { InboundSyns, HttpMethod, ROUTETYPE } from '@modules/starter';
 
 export class GetCountries implements InboundSyns<Request, string[], string[], Response> {
+    ID = 'GET_COUNTRIES';
     ROUTE_URL = '/countries';
-    METHOD = 'GET';
+    METHOD = HttpMethod.GET;
     TYPE = ROUTETYPE.INBOUND;
     extract = (request: Request): string[] => {
         return [];

@@ -6,6 +6,7 @@ import { KafkaEssentials } from './kafkaEssentials.js';
 import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
 import { Collection } from 'mongodb';
+import { routes } from './routes/register.js';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -18,7 +19,7 @@ dotenv.config();
 const PORT: number = parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = logger(SERVICE_NAME);
 
-AppServer.setupFastify(app);
+AppServer.setupFastify(app, routes);
 let rGuestStayCollection: Collection;
 
 const initialize = async () => {
@@ -30,17 +31,17 @@ const initialize = async () => {
     rGuestStayCollection.findOne({}).then((result) => {
       app.log.info(`${FIRST_DOCUMENT_MESSAGE} ${result?._id}`);
     });
-      await Promise.all([
+    await Promise.all([
       KafkaEssentials.connectToKafka(),
       AppServer.startFastify(app, PORT)
     ])
-    .then(() => {
-      app.log.info('All services started successfully');
-    })
-    .catch((err) => {
-      app.log.error('Error starting services:', err);
-      process.exit(1);
-    });
+      .then(() => {
+        app.log.info('All services started successfully');
+      })
+      .catch((err) => {
+        app.log.error('Error starting services:', err);
+        process.exit(1);
+      });
   } catch (err) {
     app.log.error(err);
     process.exit(1);

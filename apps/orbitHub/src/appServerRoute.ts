@@ -1,8 +1,9 @@
+import { HttpMethod } from '@modules/starter';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export const registerRoute = (
   app: FastifyInstance,
-  method: 'GET' | 'PUT' | 'POST',
+  method: HttpMethod,
   path: string,
   handler: (request: FastifyRequest, reply: FastifyReply) => Promise<void>
 ) => {
@@ -10,13 +11,17 @@ export const registerRoute = (
     case 'GET':
       app.get(path, handler);
       break;
-    case 'PUT':
-      app.put(path, handler);
-      break;
     case 'POST':
       app.post(path, handler);
       break;
+    case 'PUT':
+      app.put(path, handler);
+      break;
+    case 'DELETE':
+      app.delete(path, handler);
+      break;
     default:
-      throw new Error(`Unsupported method: ${method}`);
+      app.log.error(`Unsupported method: ${method}`);
+      break;
   }
 };
