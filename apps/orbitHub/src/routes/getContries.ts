@@ -9,7 +9,7 @@ export class GetCountries implements InboundSyns<Request, string[], string[], Re
     extract = (request: Request): string[] => {
         return ["india", "usa", "uk"];
     };
-    respond = (response: string[]) => {
+    respond = (response: string[]): Response => {
         const responseObj = new Response(JSON.stringify(response), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }

@@ -1,6 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { registerRoute } from './appServerRoute.js';
 import { InboundSyns, Route } from '@modules/starter';
+import os from 'os';
+import { getDirectories } from './utils.js';
+
 
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
 const RESPONSE_SENT_MESSAGE = 'Response sent for:';
@@ -37,10 +40,12 @@ export class AppServer {
           const response = await routeInstance.extract(_request);
           if (typeof routeInstance.process === 'function') {
             const processedResponse = await routeInstance.process(response);
-            reply.send(routeInstance.respond(processedResponse));
+            reply.send(processedResponse);
           } else {
-            reply.send(routeInstance.respond(response));
+            const processedResponse = await routeInstance.respond(response);
+            reply.send(processedResponse);
           }
+          
         } else {
           reply.status(500).send({ error: 'Handler method not implemented' });
         }
