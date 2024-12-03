@@ -5,6 +5,7 @@ import { MongoEssentials } from './mongoEssentials.js';
 import { KafkaEssentials } from './kafkaEssentials.js';
 import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
+import { Collection } from 'mongodb';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -12,15 +13,13 @@ const DB_COLLECTION_NAME = 'rGuestStay';
 const SHUTTING_DOWN_MESSAGE = 'Shutting down gracefully...';
 const SERVER_CLOSED_MESSAGE = 'Server closed';
 const FIRST_DOCUMENT_MESSAGE = 'First document in rGuestStay collection:';
-const ROUTE_NOT_FOUND_ERROR = 'Route not found';
 
 dotenv.config();
 const PORT: number = parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = logger(SERVICE_NAME);
 
 AppServer.setupFastify(app);
-
-let rGuestStayCollection;
+let rGuestStayCollection: Collection;
 
 const initialize = async () => {
   try {

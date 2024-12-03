@@ -1,12 +1,15 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import os from 'os';
 import { getDirectories, logRoutes } from './utils.js';
+import { registerRoute } from './appServerRoute.js';
 
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
 const RESPONSE_SENT_MESSAGE = 'Response sent for:';
 const SERVICE_IDLE_MESSAGE = 'Service is idle. Total idle time:';
 const ROUTE_NOT_FOUND_MESSAGE = 'Route not found:';
 const ROUTE_NOT_FOUND_ERROR = 'Route not found';
+const GET_DIRECTORIES_PATH = '/getDirectories';
+const GET_FILES_PATH = '/getFiles';
 
 export class AppServer {
   static setupFastify(app: FastifyInstance) {
@@ -29,13 +32,13 @@ export class AppServer {
       done();
     });
 
-    app.get('/getDirectories', async (_request: FastifyRequest, reply: FastifyReply) => {
+    registerRoute(app, 'GET', GET_DIRECTORIES_PATH, async (_request, reply) => {
       const homeDir = os.homedir();
       const directories = getDirectories(homeDir);
       reply.send(directories);
     });
 
-    app.get('/getFiles', async (_request: FastifyRequest, reply: FastifyReply) => {
+    registerRoute(app, 'GET', GET_FILES_PATH, async (_request, reply) => {
       const homeDir = os.homedir();
       const directories = getDirectories(homeDir);
       reply.send(directories);
