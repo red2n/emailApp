@@ -2,6 +2,12 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import os from 'os';
 import { getDirectories, logRoutes } from './utils.js';
 
+const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
+const RESPONSE_SENT_MESSAGE = 'Response sent for:';
+const SERVICE_IDLE_MESSAGE = 'Service is idle. Total idle time:';
+const ROUTE_NOT_FOUND_MESSAGE = 'Route not found:';
+const ROUTE_NOT_FOUND_ERROR = 'Route not found';
+
 export class AppServer {
   static setupFastify(app: FastifyInstance) {
     let lastActivityTime = Date.now();
@@ -9,16 +15,16 @@ export class AppServer {
 
     app.addHook('onRequest', (request, _reply, done) => {
       lastActivityTime = Date.now();
-      app.log.info(`Incoming request: ${request.method} ${request.url}`);
+      app.log.info(`${INCOMING_REQUEST_MESSAGE} ${request.method} ${request.url}`);
       done();
     });
 
     app.addHook('onResponse', (request, reply, done) => {
       const statusCode = reply.statusCode;
       if (statusCode >= 200 && statusCode < 300) {
-        app.log.info(`Response sent for: ${request.method} ${request.url} with status ${statusCode}`);
+        app.log.info(`${RESPONSE_SENT_MESSAGE} ${request.method} ${request.url} with status ${statusCode}`);
       } else {
-        app.log.error(`Response sent for: ${request.method} ${request.url} with status ${statusCode}`);
+        app.log.error(`${RESPONSE_SENT_MESSAGE} ${request.method} ${request.url} with status ${statusCode}`);
       }
       done();
     });
@@ -40,7 +46,7 @@ export class AppServer {
       const idleTime = currentTime - lastActivityTime;
       if (idleTime > 60000) { // 1 minute
         totalIdleTime += idleTime;
-        app.log.info(`Service is idle. Total idle time: ${totalIdleTime / 1000} seconds`);
+        app.log.info(`${SERVICE_IDLE_MESSAGE} ${totalIdleTime / 1000} seconds`);
         lastActivityTime = currentTime; // Reset last activity time
       }
     };
@@ -48,8 +54,8 @@ export class AppServer {
     setInterval(checkIdleTime, 60000); // Check every minute
 
     app.setNotFoundHandler((request, reply) => {
-      app.log.error(`Route not found: ${request.method} ${request.url}`);
-      reply.status(404).send({ error: 'Route not found' });
+      app.log.error(`${ROUTE_NOT_FOUND_MESSAGE} ${request.method} ${request.url}`);
+      reply.status(404).send({ error: ROUTE_NOT_FOUND_ERROR });
     });
 
     return app;

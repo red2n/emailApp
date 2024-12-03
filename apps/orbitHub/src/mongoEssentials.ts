@@ -2,18 +2,25 @@ import { MongoClient } from 'mongodb';
 import { FastifyInstance } from 'fastify';
 import logger from './appLogger.js';
 
+const CONNECTION_STRING_REQUIRED_ERROR = 'Connection string is required';
+const CONNECTION_STRING_TYPE_ERROR = 'Connection string must be a string';
+const ATTEMPTING_TO_CONNECT_MESSAGE = 'Attempting to connect to MongoDB server...';
+const CONNECTED_TO_MONGODB_MESSAGE = 'Connected to MongoDB server';
+const CONNECTION_TIMEOUT_ERROR = 'Failed to connect to MongoDB server: Connection timed out';
+const FAILED_TO_CONNECT_MESSAGE = 'Failed to connect to MongoDB server:';
+
 export class MongoEssentials {
     static async connectToMongoDB(connectionString: string) {
         const app: FastifyInstance = logger(MongoEssentials.name);
 
         if (!connectionString) {
-            app.log.error('Connection string is required');
-            throw new Error('Connection string is required');
+            app.log.error(CONNECTION_STRING_REQUIRED_ERROR);
+            throw new Error(CONNECTION_STRING_REQUIRED_ERROR);
         }
 
         if (typeof connectionString !== 'string') {
-            app.log.error('Connection string must be a string');
-            throw new Error('Connection string must be a string');
+            app.log.error(CONNECTION_STRING_TYPE_ERROR);
+            throw new Error(CONNECTION_STRING_TYPE_ERROR);
         }
 
         const controller = new AbortController();
@@ -21,7 +28,7 @@ export class MongoEssentials {
             controller.abort();
         }, 30000); // 30 seconds
 
-        app.log.info('Attempting to connect to MongoDB server...');
+        app.log.info(ATTEMPTING_TO_CONNECT_MESSAGE);
 
         try {
             const client = new MongoClient(connectionString, { 
@@ -29,13 +36,13 @@ export class MongoEssentials {
             });
             await client.connect();
             clearTimeout(timeout);
-            app.log.info('Connected to MongoDB server');
+            app.log.info(CONNECTED_TO_MONGODB_MESSAGE);
             return client;
         } catch (error) {
             if (controller.signal.aborted) {
-                app.log.error('Failed to connect to MongoDB server: Connection timed out');
+                app.log.error(CONNECTION_TIMEOUT_ERROR);
             } else {
-                app.log.error('Failed to connect to MongoDB server:', error);
+                app.log.error(`${FAILED_TO_CONNECT_MESSAGE} ${error}`);
             }
             throw error;
         }

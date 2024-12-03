@@ -7,9 +7,15 @@ import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
 
 const SERVICE_NAME = 'App';
+const DEFAULT_PORT = '8080';
+const DB_COLLECTION_NAME = 'rGuestStay';
+const SHUTTING_DOWN_MESSAGE = 'Shutting down gracefully...';
+const SERVER_CLOSED_MESSAGE = 'Server closed';
+const FIRST_DOCUMENT_MESSAGE = 'First document in rGuestStay collection:';
+const ROUTE_NOT_FOUND_ERROR = 'Route not found';
 
 dotenv.config();
-const PORT: number = parseInt(process.env.PORT || '8080');
+const PORT: number = parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = logger(SERVICE_NAME);
 
 AppServer.setupFastify(app);
@@ -21,9 +27,9 @@ const initialize = async () => {
     const connectionString = getConnectionString();
     const client = await MongoEssentials.connectToMongoDB(connectionString);
     const db = client.db(process.env.DB_NAME);
-    rGuestStayCollection = db.collection('rGuestStay');
+    rGuestStayCollection = db.collection(DB_COLLECTION_NAME);
     rGuestStayCollection.findOne({}).then((result) => {
-      app.log.info('First document in rGuestStay collection:', result?._id);
+      app.log.info(`${FIRST_DOCUMENT_MESSAGE} ${result?._id}`);
     });
     await KafkaEssentials.connectToKafka();
     await AppServer.startFastify(app, PORT);
@@ -36,11 +42,11 @@ const initialize = async () => {
 initialize();
 
 process.on('SIGINT', async () => {
-  app.log.info('Shutting down gracefully...');
+  app.log.info(SHUTTING_DOWN_MESSAGE);
   try {
     await KafkaEssentials.disconnectFromKafka();
     await app.close();
-    app.log.info('Server closed');
+    app.log.info(SERVER_CLOSED_MESSAGE);
     process.exit(0);
   } catch (err) {
     app.log.error(err);
