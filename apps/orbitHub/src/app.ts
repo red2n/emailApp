@@ -30,8 +30,17 @@ const initialize = async () => {
     rGuestStayCollection.findOne({}).then((result) => {
       app.log.info(`${FIRST_DOCUMENT_MESSAGE} ${result?._id}`);
     });
-    await KafkaEssentials.connectToKafka();
-    await AppServer.startFastify(app, PORT);
+      await Promise.all([
+      KafkaEssentials.connectToKafka(),
+      AppServer.startFastify(app, PORT)
+    ])
+    .then(() => {
+      app.log.info('All services started successfully');
+    })
+    .catch((err) => {
+      app.log.error('Error starting services:', err);
+      process.exit(1);
+    });
   } catch (err) {
     app.log.error(err);
     process.exit(1);
