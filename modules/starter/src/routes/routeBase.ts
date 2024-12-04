@@ -10,11 +10,6 @@ export type Route = {
     ID: string;
 
     /**
-     * The URL path of the route.
-     */
-    ROUTE_URL: string;
-
-    /**
      * The type of the route, defined by the ROUTETYPE enum.
      */
     TYPE: ROUTETYPE;

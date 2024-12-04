@@ -2,6 +2,7 @@
 import { KafkaEssentials } from "./kafka/kafkaEssentials.js";
 import { logger } from "./logger/appLogger.js";
 import { MongoEssentials } from "./mongo/mongoEssentials.js";
+import { HttpBase } from "./routes/httpBase.js";
 import { InboundSyns } from "./routes/inboundSync.js";
 import { KafkaInAsync } from "./routes/kafkaInAsync.js";
 import { Route } from "./routes/routeBase.js";
@@ -14,3 +15,4 @@ export { HttpMethod }
 export { MongoEssentials }
 export { KafkaEssentials }
 export { logger }
+export { HttpBase }

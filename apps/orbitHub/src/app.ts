@@ -4,7 +4,7 @@ import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
 import { Collection } from 'mongodb';
 import { routes } from './routes/register.js';
-import { MongoEssentials, KafkaEssentials, logger, InboundSyns } from '@modules/starter';
+import { MongoEssentials, KafkaEssentials, logger, InboundSyns, HttpBase, Route } from '@modules/starter';
 import { registerRoute } from './appServerRoute.js';
 
 const SERVICE_NAME = 'App';
@@ -20,13 +20,15 @@ const app: FastifyInstance = logger(SERVICE_NAME);
 
 AppServer.setupFastify(app);
 
-const registerRoutes = async () => {
+const registerHttpRoutes = async () => {
+  let kafkaRoutes: Route[] = [];
   for (const route of routes) {
     switch (route.TYPE) {
       case 'HTTPINBOUND':
+        const httpRoutes = route as HttpBase;
         const routeInstance = route as InboundSyns<any, any, any, any>;
-        app.log.info(`Registering ${routeInstance.METHOD} ${route.ROUTE_URL}`);
-        registerRoute(app, routeInstance.METHOD, route.ROUTE_URL, async (_request, reply) => {
+        app.log.info(`Registering ${routeInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
+        registerRoute(app, routeInstance.METHOD, httpRoutes.ROUTE_URL, async (_request, reply) => {
           if (typeof routeInstance.extract === 'function' && typeof routeInstance.respond === 'function') {
             const response = await routeInstance.extract(_request);
             if (typeof routeInstance.process === 'function') {
@@ -36,17 +38,20 @@ const registerRoutes = async () => {
               const processedResponse = await routeInstance.respond(response);
               reply.send(processedResponse);
             }
-
           } else {
             reply.status(500).send({ error: 'Handler method not implemented' });
           }
         });
+        break;
+      case 'KAFKAINBOUND':
+        kafkaRoutes.push(route);
         break;
       default:
         app.log.error(`Route type ${route.TYPE} not supported`);
         break;
     }
   }
+  return kafkaRoutes;
 };
 
 let rGuestStayCollection: Collection;
@@ -67,7 +72,7 @@ const initialize = async () => {
       }
     });
     await Promise.all([
-      registerRoutes(),
+      registerHttpRoutes(),
       KafkaEssentials.connectToKafka(),
       AppServer.startFastify(app, PORT)
     ])
