@@ -3,7 +3,7 @@ function formatServiceName(serviceName: string): string {
     return serviceName.replace(/([A-Z])/g, ' $1').trim();
 }
 
-export default function logger(SERVICE_NAME: string) {
+export function logger(SERVICE_NAME: string) {
     const formattedServiceName = formatServiceName(SERVICE_NAME);
     return fastify({
         logger: {

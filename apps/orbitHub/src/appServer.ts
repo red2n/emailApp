@@ -1,8 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { registerRoute } from './appServerRoute.js';
 import { InboundSyns, Route } from '@modules/starter';
-import os from 'os';
-import { getDirectories } from './utils.js';
 
 
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';

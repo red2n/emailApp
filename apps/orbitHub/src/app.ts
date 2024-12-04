@@ -1,12 +1,10 @@
 import dotenv from 'dotenv';
 import { FastifyInstance } from 'fastify';
-import logger from './appLogger.js';
-import { MongoEssentials } from './mongoEssentials.js';
-import { KafkaEssentials } from './kafkaEssentials.js';
 import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
 import { Collection } from 'mongodb';
 import { routes } from './routes/register.js';
+import { MongoEssentials, KafkaEssentials, logger } from '@modules/starter';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -33,7 +31,7 @@ const initialize = async () => {
       if (doc) {
         app.log.info(`${FIRST_DOCUMENT_MESSAGE} ${doc}`);
       }
-      else {  
+      else {
         app.log.warn(`${FIRST_DOCUMENT_MESSAGE} not found`);
       }
     });

@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { FastifyInstance } from 'fastify';
-import logger from './appLogger.js';
+import { logger } from '../logger/appLogger.js';
 
 const CONNECTION_STRING_REQUIRED_ERROR = 'Connection string is required';
 const CONNECTION_STRING_TYPE_ERROR = 'Connection string must be a string';

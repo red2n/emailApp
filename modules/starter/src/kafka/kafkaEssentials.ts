@@ -1,6 +1,6 @@
 import { Kafka, Consumer, logLevel } from 'kafkajs';
 import dotenv from 'dotenv';
-import logger from './appLogger.js';
+import { logger } from '../logger/appLogger.js';
 
 dotenv.config();
 
