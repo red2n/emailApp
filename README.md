@@ -1,3 +1,24 @@
+# Setup
+## Use SSH
+```
+git@github.com:red2n/emailApp.git
+```
+
+## Run application
+
+```
+~/emailApp$ npm i
+```
+### Build
+```
+~/emailApp$ npm run dist-all
+```
+### Run
+```
+~/emailApp$ cd apps/orbitHub/
+~/emailApp/apps/orbitHub$ npm run start
+```
+
 # App Naming
 **1. Gateway**
 
