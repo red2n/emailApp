@@ -5,7 +5,7 @@ export class GetStates implements InboundSyns<Request, string[], string[], strin
     ID = 'GET_STATES';
     ROUTE_URL = '/states';
     METHOD = HttpMethod.GET;
-    TYPE = ROUTETYPE.INBOUND;
+    TYPE = ROUTETYPE.HTTPINBOUND;
     extract = (request: Request): string[] => {
         return ["Tamil Nadu", "Kerala", "Andra Pradesh"];
     };

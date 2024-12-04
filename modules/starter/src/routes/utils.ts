@@ -5,8 +5,10 @@
  * @readonly
  */
 export const enum ROUTETYPE{
-    INBOUND = 'INBOUND',
-    OUTBOUND = 'OUTBOUND'
+    HTTPINBOUND = 'HTTPINBOUND',
+    HTTPOUTBOUND = 'HTTPOUTBOUND',
+    KAFKAINBOUND = 'KAFKAINBOUND',
+    KAFKAOUTBOUND = 'KAFKAOUTBOUND'
 }
 
 export enum HttpMethod {

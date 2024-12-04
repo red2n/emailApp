@@ -5,7 +5,7 @@ export class GetCountries implements InboundSyns<Request, string[], string[], st
     ID = 'GET_COUNTRIES';
     ROUTE_URL = '/countries';
     METHOD = HttpMethod.GET;
-    TYPE = ROUTETYPE.INBOUND;
+    TYPE = ROUTETYPE.HTTPINBOUND;
     extract = (request: Request): string[] => {
         return ["india", "usa", "uk"];
     };
