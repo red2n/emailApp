@@ -16,5 +16,4 @@ const sdk = new NodeSDK({
   instrumentations: [getNodeAutoInstrumentations()],
 });
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
-
 sdk.start();
