@@ -1,7 +1,7 @@
 # Setup
 ## Use SSH
 ```
-git@github.com:red2n/emailApp.git
+git clone git@github.com:red2n/emailApp.git
 ```
 
 ## Run application
