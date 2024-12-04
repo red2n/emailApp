@@ -17,6 +17,8 @@ dotenv.config();
 const PORT: number = parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = logger(SERVICE_NAME);
 
+const isDebug = process.env.DEBUG === 'true';
+
 AppServer.setupFastify(app, routes);
 let rGuestStayCollection: Collection;
 
