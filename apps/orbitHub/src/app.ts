@@ -29,7 +29,13 @@ const initialize = async () => {
     const db = client.db(process.env.DB_NAME);
     rGuestStayCollection = db.collection(DB_COLLECTION_NAME);
     rGuestStayCollection.findOne({}).then((result) => {
-      app.log.info(`${FIRST_DOCUMENT_MESSAGE} ${result?._id}`);
+      const doc = result?._id;
+      if (doc) {
+        app.log.info(`${FIRST_DOCUMENT_MESSAGE} ${doc}`);
+      }
+      else {  
+        app.log.warn(`${FIRST_DOCUMENT_MESSAGE} not found`);
+      }
     });
     await Promise.all([
       KafkaEssentials.connectToKafka(),

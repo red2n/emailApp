@@ -74,7 +74,6 @@ export class AppServer {
   static async startFastify(app: FastifyInstance, port: number) {
     try {
       await app.listen({ port });
-      //logRoutes(app);
     } catch (err) {
       app.log.error(err);
       process.exit(1);
