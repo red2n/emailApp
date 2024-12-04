@@ -1,4 +1,4 @@
-import { HttpMethod, ROUTETYPE } from "./utils.js";
+import { ROUTETYPE } from "./utils.js";
 
 /**
  * Represents a route in the application.
@@ -13,11 +13,6 @@ export type Route = {
      * The URL path of the route.
      */
     ROUTE_URL: string;
-
-    /**
-     * The HTTP method used by the route (e.g., GET, POST).
-     */
-    METHOD: HttpMethod;
 
     /**
      * The type of the route, defined by the ROUTETYPE enum.

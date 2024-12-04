@@ -1,8 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import { registerRoute } from './appServerRoute.js';
-import { InboundSyns, Route } from '@modules/starter';
-
-
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
 const RESPONSE_SENT_MESSAGE = 'Response sent for:';
 const SERVICE_IDLE_MESSAGE = 'Service is idle. Total idle time:';
@@ -10,7 +6,7 @@ const ROUTE_NOT_FOUND_MESSAGE = 'Route not found:';
 const ROUTE_NOT_FOUND_ERROR = 'Route not found';
 
 export class AppServer {
-  static setupFastify(app: FastifyInstance, routes: Route[]) {
+  static setupFastify(app: FastifyInstance) {
     let lastActivityTime = Date.now();
     let totalIdleTime = 0;
 
@@ -30,25 +26,6 @@ export class AppServer {
       done();
     });
 
-    for (const route of routes) {
-      app.log.info(`Registering ${route.METHOD} ${route.ROUTE_URL}`);
-      registerRoute(app, route.METHOD, route.ROUTE_URL, async (_request, reply) => {
-        const routeInstance = route as InboundSyns<any, any, any, any>;
-        if (typeof routeInstance.extract === 'function' && typeof routeInstance.respond === 'function') {
-          const response = await routeInstance.extract(_request);
-          if (typeof routeInstance.process === 'function') {
-            const processedResponse = await routeInstance.process(response);
-            reply.send(processedResponse);
-          } else {
-            const processedResponse = await routeInstance.respond(response);
-            reply.send(processedResponse);
-          }
-          
-        } else {
-          reply.status(500).send({ error: 'Handler method not implemented' });
-        }
-      });
-    }
     const checkIdleTime = () => {
       const currentTime = Date.now();
       const idleTime = currentTime - lastActivityTime;

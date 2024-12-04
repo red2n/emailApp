@@ -1,4 +1,5 @@
-import { Route } from "./mapper.js";
+import { Route } from "./routeBase.js";
+import { HttpMethod } from "./utils.js";
 /**
  * Represents an inbound synchronization route with specific types for input, return, response, and output.
  *
@@ -13,8 +14,12 @@ import { Route } from "./mapper.js";
  * @property {function(INTERNALRETURN): INTERNALRES} [process] - An optional function that processes the extracted data.
  * @property {function(INTERNALRES): INTERNALOUT} respond - A function that generates the output response from the processed data.
  */
-export type InboundSyns<INTERNALIN,INTERNALRETURN,INTERNALRES,INTERNALOUT>  = Route &{
-    extract: (request:INTERNALIN)=>INTERNALRETURN;
-    process?: (data:INTERNALRETURN)=>INTERNALRES;
-    respond: (response:INTERNALRES)=>INTERNALOUT;
+export type InboundSyns<INTERNALIN, INTERNALRETURN, INTERNALRES, INTERNALOUT> = Route & {
+    /**
+ * The HTTP method used by the route (e.g., GET, POST).
+ */
+    METHOD: HttpMethod;
+    extract: (request: INTERNALIN) => INTERNALRETURN;
+    process?: (data: INTERNALRETURN) => INTERNALRES;
+    respond: (response: INTERNALRES) => INTERNALOUT;
 }
