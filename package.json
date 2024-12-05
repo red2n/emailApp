@@ -15,6 +15,11 @@
   "scripts": {
     "clean-all": "lerna run clean && npx rimraf node_modules &&  npx rimraf docs",
     "dist-all": "lerna run dist",
-    "docs": "lerna run docs"
+    "docs": "lerna run docs",
+    "prepare": "husky",
+    "lint-staged": "lint-staged"
+  },
+  "dependencies": {
+    "husky": "^9.1.7"
   }
 }
