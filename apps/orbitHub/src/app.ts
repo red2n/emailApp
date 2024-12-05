@@ -53,9 +53,34 @@ const registerHttpRoutes = async () => {
               eachMessage: async ({ topic, message }) => {
                 app.log.info(`Received message: ${message.value?.toString()} on topic: ${topic}`);
                 kafkaInstance.consume(message.value?.toString())
+                  .then((data) => {
+                    return kafkaInstance.process(data);
+                  })
+                  .then((data) => {
+                    kafkaInstance.produce(data);
+                  })
+                  .catch((err) => {
+                    app.log.error('Error processing message:', err);
+                  });
               },
             });
           });
+
+        KafkaUtils.initializeProducer(KafkaEssentials.kafka).then((producer) => {
+          kafkaInstance.produce = async (data: any) => {
+            try {
+              await producer.send({
+                topic: kafkaInstance.outTopic,
+                messages: [
+                  { value: data },
+                ],
+              });
+              app.log.info(`Message sent to topic: ${kafkaInstance.outTopic}`);
+            } catch (err) {
+              app.log.error(`Error sending message to topic: ${kafkaInstance.outTopic}`, err);
+            }
+          }
+        });
 
         break;
       }
