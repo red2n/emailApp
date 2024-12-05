@@ -4,7 +4,7 @@
  * @enum {string}
  * @readonly
  */
-export const enum ROUTETYPE{
+export enum ROUTETYPE{
     HTTPINBOUND = 'HTTPINBOUND',
     HTTPOUTBOUND = 'HTTPOUTBOUND',
     KAFKAINBOUND = 'KAFKAINBOUND',

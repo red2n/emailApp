@@ -1,7 +1,7 @@
-import { Kafka, logLevel, Consumer, Producer } from 'kafkajs';
+import { Kafka, logLevel, type Consumer, type Producer } from 'kafkajs';
 import dotenv from 'dotenv';
 import { logger } from '../logger/appLogger.js';
-import { KafkaUtils } from './kafkaUtils.js';
+import type { KafkaConfig } from './kafkaConfig.js';
 
 dotenv.config();
 
@@ -13,30 +13,31 @@ const ATTEMPTING_TO_CONNECT_MESSAGE = 'Attempting to connect to Kafka...';
 const FAILED_TO_CONNECT_MESSAGE = 'Failed to connect to Kafka:';
 
 export class KafkaEssentials {
-    private static consumer: Consumer;
-    private static producer: Producer;
+    constructor() {
+        throw new Error('This class should not be instantiated');
+    }
     public static kafka: Kafka;
-    public static kafkaConfig: any;
+    public static kafkaConfig: KafkaConfig;
 
     static async connectToKafka() {
-        if (this.kafka) {
+        if (KafkaEssentials.kafka) {
             throw new Error('Kafka is already connected');
         }
         const app = logger(KafkaEssentials.name);
-        this.kafkaConfig = {
+        KafkaEssentials.kafkaConfig = {
             clientId: KAFKA_CLIENT_ID,
             brokers: KAFKA_BROKERS.split(','),
             groupId: KAFKA_GROUP_ID,
         };
-        if (!this.kafkaConfig.brokers.length) {
+        if (!KafkaEssentials.kafkaConfig.brokers.length) {
             app.log.error(KAFKA_BROKERS_REQUIRED_ERROR);
             throw new Error(KAFKA_BROKERS_REQUIRED_ERROR);
         }
         app.log.info(ATTEMPTING_TO_CONNECT_MESSAGE);
         try {
-            this.kafka = new Kafka({
-                clientId: this.kafkaConfig.clientId,
-                brokers: this.kafkaConfig.brokers,
+            KafkaEssentials.kafka = new Kafka({
+                clientId: KafkaEssentials.kafkaConfig.clientId,
+                brokers: KafkaEssentials.kafkaConfig.brokers,
                 logLevel: logLevel.INFO,
                 logCreator: () => {
                     return ({ namespace, level, log }) => {

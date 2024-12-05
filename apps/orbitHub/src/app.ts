@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
-import { Collection } from 'mongodb';
+import type { Collection } from 'mongodb';
 import { routes } from './routes/register.js';
-import { MongoEssentials, KafkaEssentials, logger, InboundSyns, HttpBase, Route, KafkaUtils, KafkaInAsync } from '@modules/starter';
+import { MongoEssentials, KafkaEssentials, logger, type InboundSyns, type HttpBase, type Route, KafkaUtils, type KafkaInAsync } from '@modules/starter';
 import { registerRoute } from './appServerRoute.js';
 
 const SERVICE_NAME = 'App';
@@ -15,16 +15,16 @@ const SERVER_CLOSED_MESSAGE = 'Server closed';
 const FIRST_DOCUMENT_MESSAGE = 'First document in rGuestStay collection:';
 
 dotenv.config();
-const PORT: number = parseInt(process.env.PORT || DEFAULT_PORT);
+const PORT: number = Number.parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = logger(SERVICE_NAME);
 
 AppServer.setupFastify(app);
 
 const registerHttpRoutes = async () => {
-  let kafkaRoutes: Route[] = [];
+  const kafkaRoutes: Route[] = [];
   for (const route of routes) {
     switch (route.TYPE) {
-      case 'HTTPINBOUND':
+      case 'HTTPINBOUND': {
         const httpRoutes = route as HttpBase;
         const httpInstance = route as InboundSyns<any, any, any, any>;
         app.log.info(`Registering ${httpInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
@@ -43,9 +43,10 @@ const registerHttpRoutes = async () => {
           }
         });
         break;
-      case 'KAFKAINBOUND':
+      }
+      case 'KAFKAINBOUND': {
         const kafkaInstance = route as KafkaInAsync<any, any, any, any>;
-        KafkaUtils.initializeConsumer(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app, kafkaInstance.topic)
+        KafkaUtils.initializeConsumer(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, kafkaInstance.topic)
           .then((consumer) => {
             app.log.info(`Consumer is listening on topic: ${kafkaInstance.topic}`);
             consumer.run({
@@ -57,6 +58,7 @@ const registerHttpRoutes = async () => {
           });
 
         break;
+      }
       default:
         app.log.error(`Route type ${route.TYPE} not supported`);
         break;

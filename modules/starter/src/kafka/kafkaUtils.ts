@@ -1,14 +1,21 @@
-import { Kafka, Consumer, Producer } from 'kafkajs';
+import type { Kafka, Consumer, Producer } from 'kafkajs';
+import type { KafkaConfig } from './kafkaConfig.js';
+import type { FastifyInstance } from 'fastify/types/instance.js';
 
 export class KafkaUtils {
-    static async initializeConsumer(kafka: Kafka, kafkaConfig: any, app: any, topic: string): Promise<Consumer> {
+
+    constructor() {
+        throw new Error("This class should not be instantiated");
+    }
+
+    static async initializeConsumer(kafka: Kafka, kafkaConfig: KafkaConfig, topic: string): Promise<Consumer> {
         const consumer = kafka.consumer({ groupId: kafkaConfig.groupId });
         await consumer.connect();
         await consumer.subscribe({ topic: topic, fromBeginning: true });
         return consumer;
     }
 
-    static async initializeProducer(kafka: Kafka, app: any, topic: string, message: string): Promise<Producer> {
+    static async initializeProducer(kafka: Kafka, app: FastifyInstance, topic: string, message: string): Promise<Producer> {
         const producer = kafka.producer();
         await producer.connect();
         await producer.send({
@@ -24,7 +31,7 @@ export class KafkaUtils {
         return producer;
     }
 
-    static async disconnectFromKafka(kafka: Kafka, kafkaConfig: any, app: any) {
+    static async disconnectFromKafka(kafka: Kafka, kafkaConfig: KafkaConfig, app: FastifyInstance) {
         const consumer = kafka.consumer({ groupId: kafkaConfig.groupId });
         const producer = kafka.producer();
 

@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { logger } from '../logger/appLogger.js';
 
 const CONNECTION_STRING_REQUIRED_ERROR = 'Connection string is required';
@@ -10,6 +10,9 @@ const CONNECTION_TIMEOUT_ERROR = 'Failed to connect to MongoDB server: Connectio
 const FAILED_TO_CONNECT_MESSAGE = 'Failed to connect to MongoDB server:';
 
 export class MongoEssentials {
+    constructor() {
+        throw new Error('This class is not meant to be instantiated');
+    }
     static async connectToMongoDB(connectionString: string) {
         const app: FastifyInstance = logger(MongoEssentials.name);
 
@@ -31,7 +34,7 @@ export class MongoEssentials {
         app.log.info(ATTEMPTING_TO_CONNECT_MESSAGE);
 
         try {
-            const client = new MongoClient(connectionString, { 
+            const client = new MongoClient(connectionString, {
                 serverSelectionTimeoutMS: 30000 // 30 seconds
             });
             await client.connect();

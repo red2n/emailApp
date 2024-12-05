@@ -1,4 +1,4 @@
-import { KafkaInAsync, ROUTETYPE } from "@modules/starter";
+import { type KafkaInAsync, ROUTETYPE } from "@modules/starter";
 
 export class NotifyWorker implements KafkaInAsync<string, string, string, string> {
     ID = "NOTIFY_WORKER";

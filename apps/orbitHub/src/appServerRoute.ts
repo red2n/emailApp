@@ -1,5 +1,5 @@
-import { HttpMethod } from '@modules/starter';
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type { HttpMethod } from '@modules/starter';
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export const registerRoute = (
   app: FastifyInstance,
