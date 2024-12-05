@@ -12,13 +12,52 @@ const KAFKA_BROKERS_REQUIRED_ERROR = 'Kafka brokers are required';
 const ATTEMPTING_TO_CONNECT_MESSAGE = 'Attempting to connect to Kafka...';
 const FAILED_TO_CONNECT_MESSAGE = 'Failed to connect to Kafka:';
 
+/**
+ * The `KafkaEssentials` class provides essential methods and properties for interacting with a Kafka messaging system.
+ * This class is designed to be used statically and should not be instantiated.
+ * 
+ * @remarks
+ * The class includes a static instance of the Kafka client and configuration settings required to connect to a Kafka cluster.
+ * 
+ * @example
+ * ```typescript
+ * await KafkaEssentials.connectToKafka();
+ * ```
+ * 
+ * @throws {Error} If the class is instantiated directly.
+ */
 export class KafkaEssentials {
     constructor() {
         throw new Error('This class should not be instantiated');
     }
+    /**
+     * A static instance of the Kafka class.
+     * This instance is used to interact with the Kafka messaging system.
+     */
     public static kafka: Kafka;
+    /**
+     * Configuration settings for Kafka.
+     * 
+     * This static property holds the configuration settings required to connect and interact with a Kafka cluster.
+     * 
+     * @type {KafkaConfig}
+     */
     public static kafkaConfig: KafkaConfig;
-
+    
+    /**
+     * Connects to a Kafka instance using the provided configuration.
+     * 
+     * This method initializes a Kafka client with the specified client ID, brokers, and log level.
+     * It also sets up custom logging for different log levels (ERROR, WARN, INFO, DEBUG).
+     * 
+     * @throws {Error} If Kafka is already connected or if the brokers configuration is missing.
+     * @throws {Error} If there is an error during the connection attempt.
+     * 
+     * @example
+     * ```typescript
+     * await KafkaEssentials.connectToKafka();
+     * ```
+     */
     static async connectToKafka() {
         if (KafkaEssentials.kafka) {
             throw new Error('Kafka is already connected');
