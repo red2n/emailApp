@@ -6,12 +6,14 @@
     "modules/*"
   ],
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "lerna": "^8.1.9",
     "rimraf": "^5.0.5",
-    "copyfiles": "^2.4.1"
+    "typedoc": "^0.27.3"
   },
   "scripts": {
-    "clean-all": "lerna run clean && npx rimraf node_modules",
-    "dist-all": "lerna run dist"
+    "clean-all": "lerna run clean && npx rimraf node_modules &&  npx rimraf docs",
+    "dist-all": "lerna run dist",
+    "docs": "lerna run docs"
   }
 }
