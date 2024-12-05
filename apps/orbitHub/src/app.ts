@@ -1,11 +1,11 @@
+import { AppLogger, type HttpBase, type InboundSyns, KafkaEssentials, type KafkaInAsync, KafkaUtils, MongoEssentials, type Route } from '@modules/starter';
 import dotenv from 'dotenv';
 import type { FastifyInstance } from 'fastify';
-import { getConnectionString } from './utils.js';
-import { AppServer } from './appServer.js';
 import type { Collection } from 'mongodb';
-import { routes } from './routes/register.js';
-import { MongoEssentials, KafkaEssentials, logger, type InboundSyns, type HttpBase, type Route, KafkaUtils, type KafkaInAsync } from '@modules/starter';
+import { AppServer } from './appServer.js';
 import { registerRoute } from './appServerRoute.js';
+import { routes } from './routes/register.js';
+import { getConnectionString } from './utils.js';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -16,7 +16,7 @@ const FIRST_DOCUMENT_MESSAGE = 'First document in rGuestStay collection:';
 
 dotenv.config();
 const PORT: number = Number.parseInt(process.env.PORT || DEFAULT_PORT);
-const app: FastifyInstance = logger(SERVICE_NAME);
+const app: FastifyInstance = AppLogger.getLogger(SERVICE_NAME);
 
 AppServer.setupFastify(app);
 
