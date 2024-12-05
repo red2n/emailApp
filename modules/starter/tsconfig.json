@@ -12,5 +12,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "resolveJsonModule": true
+  }, "typedocOptions": {
+    "entryPoints": [
+      "src/**/*.ts"
+    ],
+    "out": "../../docs/module"
   }
 }
