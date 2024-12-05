@@ -6,10 +6,10 @@ export class GetStates implements InboundSyns<Request, string[], string[], strin
     ROUTE_URL = '/states';
     METHOD = HttpMethod.GET;
     TYPE = ROUTETYPE.HTTPINBOUND;
-    extract = (request: Request): string[] => {
+    async extract (request: Request): Promise<string[]> {
         return ["Tamil Nadu", "Kerala", "Andra Pradesh"];
     };
-    respond = (response: string[]): string => {
+   async respond (response: string[]): Promise<string> {
         return JSON.stringify(response);
     }
 }

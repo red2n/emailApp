@@ -1,6 +1,6 @@
-import { MongoClient } from 'mongodb';
 import type { FastifyInstance } from 'fastify';
-import { logger } from '../logger/appLogger.js';
+import { MongoClient } from 'mongodb';
+import AppLogger from '../logger/appLogger.js';
 
 const CONNECTION_STRING_REQUIRED_ERROR = 'Connection string is required';
 const CONNECTION_STRING_TYPE_ERROR = 'Connection string must be a string';
@@ -14,7 +14,7 @@ export class MongoEssentials {
         throw new Error('This class is not meant to be instantiated');
     }
     static async connectToMongoDB(connectionString: string) {
-        const app: FastifyInstance = logger(MongoEssentials.name);
+        const app: FastifyInstance = AppLogger.getLogger(MongoEssentials.name);
 
         if (!connectionString) {
             app.log.error(CONNECTION_STRING_REQUIRED_ERROR);

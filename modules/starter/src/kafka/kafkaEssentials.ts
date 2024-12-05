@@ -1,6 +1,6 @@
-import { Kafka, logLevel, type Consumer, type Producer } from 'kafkajs';
 import dotenv from 'dotenv';
-import { logger } from '../logger/appLogger.js';
+import { Kafka, logLevel } from 'kafkajs';
+import AppLogger from '../logger/appLogger.js';
 import type { KafkaConfig } from './kafkaConfig.js';
 
 dotenv.config();
@@ -23,7 +23,7 @@ export class KafkaEssentials {
         if (KafkaEssentials.kafka) {
             throw new Error('Kafka is already connected');
         }
-        const app = logger(KafkaEssentials.name);
+        const app = AppLogger.getLogger(KafkaEssentials.name);
         KafkaEssentials.kafkaConfig = {
             clientId: KAFKA_CLIENT_ID,
             brokers: KAFKA_BROKERS.split(','),
