@@ -6,10 +6,10 @@ export class GetCountries implements InboundSyns<Request, string[], string[], st
     ROUTE_URL = '/countries';
     METHOD = HttpMethod.GET;
     TYPE = ROUTETYPE.HTTPINBOUND;
-    extract = (request: Request): string[] => {
+    async extract(request: Request): Promise<string[]> {
         return ["india", "usa", "uk"];
     };
-    respond = (response: string[]): string => {
+    async respond(response: string[]): Promise<string> {
         return JSON.stringify(response);
     };
 }

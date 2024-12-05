@@ -15,7 +15,7 @@ import { Route } from "./routeBase.js";
  * @property {function(INTERNALRES): INTERNALOUT} respond - A function that generates the output response from the processed data.
  */
 export type InboundSyns<INTERNALIN, INTERNALRETURN, INTERNALRES, INTERNALOUT> = HttpBase & {
-    extract: (request: INTERNALIN) => INTERNALRETURN;
-    process?: (data: INTERNALRETURN) => INTERNALRES;
-    respond: (response: INTERNALRES) => INTERNALOUT;
+    extract(request: INTERNALIN): Promise<INTERNALRETURN>;
+    process?(data: INTERNALRETURN): Promise<INTERNALRES>;
+    respond(response: INTERNALRES): Promise<INTERNALOUT>;
 }
