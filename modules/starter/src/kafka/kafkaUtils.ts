@@ -15,19 +15,9 @@ export class KafkaUtils {
         return consumer;
     }
 
-    static async initializeProducer(kafka: Kafka, app: FastifyInstance, topic: string, message: string): Promise<Producer> {
+    static async initializeProducer(kafka: Kafka): Promise<Producer> {
         const producer = kafka.producer();
         await producer.connect();
-        await producer.send({
-            topic: topic,
-            messages: [
-                { value: message },
-            ],
-        }).then(() => {
-            app.log.info(`Message sent to topic: ${topic}`);
-        }).catch((err) => {
-            app.log.error(`Error sending message to topic: ${topic}`, err);
-        });
         return producer;
     }
 
