@@ -13,6 +13,7 @@
     "start": " node --loader ts-node/esm src/app.ts",
     "starti": "npx ts-node --require ./instrumentation.ts ./src/app.ts",
     "clean": "npx rimraf ./dist ./node_modules ./coverage ./docs",
+    "prettier": "prettier --write **/*.{graphql,gql,json,md,ts,yml}",
     "docs": "typedoc"
   },
   "keywords": [],
