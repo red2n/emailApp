@@ -1,4 +1,5 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
+
 const INCOMING_REQUEST_MESSAGE = 'Incoming request:';
 const RESPONSE_SENT_MESSAGE = 'Response sent for:';
 const SERVICE_IDLE_MESSAGE = 'Service is idle. Total idle time:';
@@ -6,6 +7,9 @@ const ROUTE_NOT_FOUND_MESSAGE = 'Route not found:';
 const ROUTE_NOT_FOUND_ERROR = 'Route not found';
 
 export class AppServer {
+  constructor() {
+    throw new Error('Cannot instantiate this class');
+  }
   static setupFastify(app: FastifyInstance) {
     let lastActivityTime = Date.now();
     let totalIdleTime = 0;

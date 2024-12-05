@@ -1,6 +1,14 @@
-import { Route } from "./routeBase.js";
-import { HttpMethod } from "./utils.js";
+import type { Route } from "./routeBase.js";
+import type { HttpMethod } from "./utils.js";
 
+/**
+ * Represents a base HTTP route.
+ * 
+ * @extends Route
+ * 
+ * @property {HttpMethod} METHOD - The HTTP method used by the route (e.g., GET, POST).
+ * @property {string} ROUTE_URL - The URL path of the route.
+ */
 export type HttpBase = Route & {
     /**
      * The HTTP method used by the route (e.g., GET, POST).

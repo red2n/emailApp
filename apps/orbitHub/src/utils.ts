@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { FastifyInstance } from 'fastify';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { FastifyInstance } from 'fastify';
 
 export function getDirectories(srcPath: string): string[] {
   return fs.readdirSync(srcPath).filter((file) => {
@@ -19,8 +19,8 @@ export const getConnectionString = (): string => {
 export const logRoutes = (app: FastifyInstance) => {
   app.log.info('Available routes:');
   const routes = app.printRoutes().split('\n').filter(route => !route.includes('/*'));
-  routes.forEach(route => {
+  for (const route of routes) {
     const [method, url] = route.trim().split(' ');
     app.log.info(`Registered ${method} ${url}`);
-  });
+  }
 };

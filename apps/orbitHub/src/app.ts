@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
-import { Collection } from 'mongodb';
+import type { Collection } from 'mongodb';
 import { routes } from './routes/register.js';
-import { MongoEssentials, KafkaEssentials, logger, InboundSyns, HttpBase, Route } from '@modules/starter';
+import { MongoEssentials, KafkaEssentials, logger, type InboundSyns, type HttpBase, type Route, KafkaUtils, type KafkaInAsync } from '@modules/starter';
 import { registerRoute } from './appServerRoute.js';
 
 const SERVICE_NAME = 'App';
@@ -15,27 +15,27 @@ const SERVER_CLOSED_MESSAGE = 'Server closed';
 const FIRST_DOCUMENT_MESSAGE = 'First document in rGuestStay collection:';
 
 dotenv.config();
-const PORT: number = parseInt(process.env.PORT || DEFAULT_PORT);
+const PORT: number = Number.parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = logger(SERVICE_NAME);
 
 AppServer.setupFastify(app);
 
 const registerHttpRoutes = async () => {
-  let kafkaRoutes: Route[] = [];
+  const kafkaRoutes: Route[] = [];
   for (const route of routes) {
     switch (route.TYPE) {
-      case 'HTTPINBOUND':
+      case 'HTTPINBOUND': {
         const httpRoutes = route as HttpBase;
-        const routeInstance = route as InboundSyns<any, any, any, any>;
-        app.log.info(`Registering ${routeInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
-        registerRoute(app, routeInstance.METHOD, httpRoutes.ROUTE_URL, async (_request, reply) => {
-          if (typeof routeInstance.extract === 'function' && typeof routeInstance.respond === 'function') {
-            const response = await routeInstance.extract(_request);
-            if (typeof routeInstance.process === 'function') {
-              const processedResponse = await routeInstance.process(response);
+        const httpInstance = route as InboundSyns<any, any, any, any>;
+        app.log.info(`Registering ${httpInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
+        registerRoute(app, httpInstance.METHOD, httpRoutes.ROUTE_URL, async (_request, reply) => {
+          if (typeof httpInstance.extract === 'function' && typeof httpInstance.respond === 'function') {
+            const response = await httpInstance.extract(_request);
+            if (typeof httpInstance.process === 'function') {
+              const processedResponse = await httpInstance.process(response);
               reply.send(processedResponse);
             } else {
-              const processedResponse = await routeInstance.respond(response);
+              const processedResponse = await httpInstance.respond(response);
               reply.send(processedResponse);
             }
           } else {
@@ -43,9 +43,22 @@ const registerHttpRoutes = async () => {
           }
         });
         break;
-      case 'KAFKAINBOUND':
-        kafkaRoutes.push(route);
+      }
+      case 'KAFKAINBOUND': {
+        const kafkaInstance = route as KafkaInAsync<any, any, any, any>;
+        KafkaUtils.initializeConsumer(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, kafkaInstance.topic)
+          .then((consumer) => {
+            app.log.info(`Consumer is listening on topic: ${kafkaInstance.topic}`);
+            consumer.run({
+              eachMessage: async ({ topic, message }) => {
+                app.log.info(`Received message: ${message.value?.toString()} on topic: ${topic}`);
+                kafkaInstance.consume(message.value?.toString())
+              },
+            });
+          });
+
         break;
+      }
       default:
         app.log.error(`Route type ${route.TYPE} not supported`);
         break;
@@ -72,9 +85,17 @@ const initialize = async () => {
       }
     });
     await Promise.all([
-      registerHttpRoutes(),
-      KafkaEssentials.connectToKafka(),
-      AppServer.startFastify(app, PORT)
+      KafkaEssentials.connectToKafka().then(() => {
+        registerHttpRoutes().then(() => {
+          AppServer.startFastify(app, PORT)
+        }).catch((err) => {
+          app.log.error('Error registering routes:', err);
+          process.exit(1);
+        })
+      }).catch((err) => {
+        app.log.error(`Error Connecting Kafka: ${err}`);
+        process.exit(1);
+      }),
     ])
       .then(() => {
         app.log.info('All services started successfully');
@@ -94,7 +115,7 @@ initialize();
 process.on('SIGINT', async () => {
   app.log.info(SHUTTING_DOWN_MESSAGE);
   try {
-    await KafkaEssentials.disconnectFromKafka();
+    await await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app);
     await app.close();
     app.log.info(SERVER_CLOSED_MESSAGE);
     process.exit(0);

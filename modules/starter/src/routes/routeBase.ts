@@ -1,4 +1,4 @@
-import { ROUTETYPE } from "./utils.js";
+import type { ROUTETYPE } from "./utils.js";
 
 /**
  * Represents a route in the application.
