@@ -4,7 +4,7 @@ import { getConnectionString } from './utils.js';
 import { AppServer } from './appServer.js';
 import { Collection } from 'mongodb';
 import { routes } from './routes/register.js';
-import { MongoEssentials, KafkaEssentials, logger, InboundSyns, HttpBase, Route } from '@modules/starter';
+import { MongoEssentials, KafkaEssentials, logger, InboundSyns, HttpBase, Route, KafkaUtils, KafkaInAsync } from '@modules/starter';
 import { registerRoute } from './appServerRoute.js';
 
 const SERVICE_NAME = 'App';
@@ -26,16 +26,16 @@ const registerHttpRoutes = async () => {
     switch (route.TYPE) {
       case 'HTTPINBOUND':
         const httpRoutes = route as HttpBase;
-        const routeInstance = route as InboundSyns<any, any, any, any>;
-        app.log.info(`Registering ${routeInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
-        registerRoute(app, routeInstance.METHOD, httpRoutes.ROUTE_URL, async (_request, reply) => {
-          if (typeof routeInstance.extract === 'function' && typeof routeInstance.respond === 'function') {
-            const response = await routeInstance.extract(_request);
-            if (typeof routeInstance.process === 'function') {
-              const processedResponse = await routeInstance.process(response);
+        const httpInstance = route as InboundSyns<any, any, any, any>;
+        app.log.info(`Registering ${httpInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
+        registerRoute(app, httpInstance.METHOD, httpRoutes.ROUTE_URL, async (_request, reply) => {
+          if (typeof httpInstance.extract === 'function' && typeof httpInstance.respond === 'function') {
+            const response = await httpInstance.extract(_request);
+            if (typeof httpInstance.process === 'function') {
+              const processedResponse = await httpInstance.process(response);
               reply.send(processedResponse);
             } else {
-              const processedResponse = await routeInstance.respond(response);
+              const processedResponse = await httpInstance.respond(response);
               reply.send(processedResponse);
             }
           } else {
@@ -44,7 +44,18 @@ const registerHttpRoutes = async () => {
         });
         break;
       case 'KAFKAINBOUND':
-        kafkaRoutes.push(route);
+        const kafkaInstance = route as KafkaInAsync<any, any, any, any>;
+        KafkaUtils.initializeConsumer(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app, kafkaInstance.topic)
+          .then((consumer) => {
+            app.log.info(`Consumer is listening on topic: ${kafkaInstance.topic}`);
+            consumer.run({
+              eachMessage: async ({ topic, message }) => {
+                app.log.info(`Received message: ${message.value?.toString()} on topic: ${topic}`);
+                kafkaInstance.consume(message.value?.toString())
+              },
+            });
+          });
+
         break;
       default:
         app.log.error(`Route type ${route.TYPE} not supported`);
@@ -72,8 +83,9 @@ const initialize = async () => {
       }
     });
     await Promise.all([
-      registerHttpRoutes(),
-      KafkaEssentials.connectToKafka(),
+      KafkaEssentials.connectToKafka().then(() => {
+        registerHttpRoutes()
+      }),
       AppServer.startFastify(app, PORT)
     ])
       .then(() => {
@@ -94,7 +106,7 @@ initialize();
 process.on('SIGINT', async () => {
   app.log.info(SHUTTING_DOWN_MESSAGE);
   try {
-    await KafkaEssentials.disconnectFromKafka();
+    await  await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app);
     await app.close();
     app.log.info(SERVER_CLOSED_MESSAGE);
     process.exit(0);

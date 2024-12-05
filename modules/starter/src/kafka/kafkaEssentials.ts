@@ -1,7 +1,7 @@
 import { Kafka, logLevel, Consumer, Producer } from 'kafkajs';
 import dotenv from 'dotenv';
 import { logger } from '../logger/appLogger.js';
-import { initializeConsumer, disconnectFromKafka } from './kafkaUtils.js';
+import { KafkaUtils } from './kafkaUtils.js';
 
 dotenv.config();
 
@@ -19,6 +19,9 @@ export class KafkaEssentials {
     public static kafkaConfig: any;
 
     static async connectToKafka() {
+        if (this.kafka) {
+            throw new Error('Kafka is already connected');
+        }
         const app = logger(KafkaEssentials.name);
         this.kafkaConfig = {
             clientId: KAFKA_CLIENT_ID,
@@ -58,15 +61,9 @@ export class KafkaEssentials {
                     };
                 },
             });
-            this.consumer = await initializeConsumer(this.kafka, this.kafkaConfig, app);
         } catch (error) {
             app.log.error(FAILED_TO_CONNECT_MESSAGE, error);
             throw error;
         }
-    }
-
-    static async disconnectFromKafka() {
-        const app = logger(KafkaEssentials.name);
-        await disconnectFromKafka(this.consumer, this.producer, app);
     }
 }
