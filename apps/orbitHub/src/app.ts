@@ -84,9 +84,16 @@ const initialize = async () => {
     });
     await Promise.all([
       KafkaEssentials.connectToKafka().then(() => {
-        registerHttpRoutes()
+        registerHttpRoutes().then(() => {
+          AppServer.startFastify(app, PORT)
+        }).catch((err) => {
+          app.log.error('Error registering routes:', err);
+          process.exit(1);
+        })
+      }).catch((err) => {
+        app.log.error(`Error Connecting Kafka: ${err}`);
+        process.exit(1);
       }),
-      AppServer.startFastify(app, PORT)
     ])
       .then(() => {
         app.log.info('All services started successfully');
@@ -106,7 +113,7 @@ initialize();
 process.on('SIGINT', async () => {
   app.log.info(SHUTTING_DOWN_MESSAGE);
   try {
-    await  await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app);
+    await await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app);
     await app.close();
     app.log.info(SERVER_CLOSED_MESSAGE);
     process.exit(0);
