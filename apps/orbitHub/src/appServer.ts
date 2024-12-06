@@ -84,6 +84,11 @@ export class AppServer {
       done();
     });
 
+    app.addHook('onClose', (instance, done) => {
+      app.log.info("Unregistering all routes");
+      done();
+    });
+
     const checkIdleTime = () => {
       const currentTime = Date.now();
       const idleTime = currentTime - lastActivityTime;

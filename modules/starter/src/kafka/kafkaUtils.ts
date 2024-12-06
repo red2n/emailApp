@@ -1,4 +1,4 @@
-import type { Kafka, Consumer, Producer } from 'kafkajs';
+import { type Kafka, type Consumer, type Producer, Partitioners } from 'kafkajs';
 import type { KafkaConfig } from './kafkaConfig.js';
 import type { FastifyInstance } from 'fastify/types/instance.js';
 
@@ -34,7 +34,7 @@ export class KafkaUtils {
      * @returns {Promise<Producer>} A promise that resolves to the connected Kafka producer.
      */
     static async initializeProducer(kafka: Kafka): Promise<Producer> {
-        const producer = kafka.producer();
+        const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
         await producer.connect();
         return producer;
     }
@@ -50,23 +50,24 @@ export class KafkaUtils {
      *
      * @throws Will log an error if there is an issue disconnecting the consumer or producer.
      */
-    static async disconnectFromKafka(kafka: Kafka, kafkaConfig: KafkaConfig, app: FastifyInstance) {
-        const consumer = kafka.consumer({ groupId: kafkaConfig.groupId });
-        const producer = kafka.producer();
+    static async disconnectFromKafka(kafka: Kafka, consumers: Consumer[], producers: Producer[], app: FastifyInstance) {
+        try {
+            app.log.info('Disconnecting consumers and producers...');
+            await Promise.all(consumers.map(consumer => consumer.disconnect().then(() => {
+                app.log.info('Successfully disconnected all consumers from Kafka.');
+            })));
+            await Promise.all(producers.map(producer => producer.disconnect().then(() => {
+                app.log.info('Successfully disconnected all producers from Kafka.');
+            })));
+            app.log.info('Disconnecting from Kafka...');
+            await kafka.admin().disconnect().then(() => {
+                app.log.info('Successfully disconnected from Kafka.');
+            }).catch((err) => {
+                app.log.error('Error disconnecting from Kafka:', err);
+            });
 
-        if (consumer) {
-            await consumer.disconnect().then(() => {
-                app.log.info("Consumer disconnected from Kafka");
-            }).catch((err) => {
-                app.log.error("Error disconnecting consumer from Kafka", err);
-            });
-        }
-        if (producer) {
-            await producer.disconnect().then(() => {
-                app.log.info("Producer disconnected from Kafka");
-            }).catch((err) => {
-                app.log.error("Error disconnecting producer from Kafka", err);
-            });
+        } catch (err) {
+            app.log.error('Error disconnecting from Kafka:', err);
         }
     }
 }
