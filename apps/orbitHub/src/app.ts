@@ -6,6 +6,7 @@ import { AppServer } from './appServer.js';
 import { registerRoute } from './appServerRoute.js';
 import { routes } from './routes/register.js';
 import { getConnectionString } from './utils.js';
+import type { Consumer, Producer } from 'kafkajs';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -13,7 +14,8 @@ const DB_COLLECTION_NAME = 'rGuestStay';
 const SHUTTING_DOWN_MESSAGE = 'Shutting down gracefully...';
 const SERVER_CLOSED_MESSAGE = 'Server closed';
 const FIRST_DOCUMENT_MESSAGE = 'First document in rGuestStay collection:';
-
+const consumers: Consumer[] = [];
+const producers: Producer[] = [];
 dotenv.config();
 const PORT: number = Number.parseInt(process.env.PORT || DEFAULT_PORT);
 const app: FastifyInstance = AppLogger.getLogger(SERVICE_NAME);
@@ -48,6 +50,7 @@ const registerHttpRoutes = async () => {
         const kafkaInstance = route as KafkaInAsync<any, any, any, any>;
         KafkaUtils.initializeConsumer(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, kafkaInstance.topic)
           .then((consumer) => {
+            consumers.push(consumer);
             app.log.info(`Consumer is listening on topic: ${kafkaInstance.topic}`);
             consumer.run({
               eachMessage: async ({ topic, message }) => {
@@ -67,6 +70,7 @@ const registerHttpRoutes = async () => {
           });
 
         KafkaUtils.initializeProducer(KafkaEssentials.kafka).then((producer) => {
+          producers.push(producer);
           kafkaInstance.produce = async (data: any) => {
             try {
               await producer.send({
@@ -140,7 +144,7 @@ initialize();
 process.on('SIGINT', async () => {
   app.log.info(SHUTTING_DOWN_MESSAGE);
   try {
-    await await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, app);
+    await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka,consumers, producers, app);
     await app.close();
     app.log.info(SERVER_CLOSED_MESSAGE);
     process.exit(0);
