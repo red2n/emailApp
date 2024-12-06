@@ -1,8 +1,7 @@
-import { AppLogger, type HttpBase, type InboundSyns, KafkaEssentials, type KafkaInAsync, KafkaUtils, MongoEssentials, type Route } from '@modules/starter';
+import { AppLogger, AppServer, type HttpBase, type InboundSyns, KafkaEssentials, type KafkaInAsync, KafkaUtils, MongoEssentials, type Route } from '@modules/starter';
 import dotenv from 'dotenv';
 import type { FastifyInstance } from 'fastify';
 import type { Collection } from 'mongodb';
-import { AppServer } from './appServer.js';
 import { registerRoute } from './appServerRoute.js';
 import { routes } from './routes/register.js';
 import { getConnectionString } from './utils.js';

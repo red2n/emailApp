@@ -1,4 +1,5 @@
-import type { Route } from "./routeBase.js";
+import type { Route } from "../routeBase.js";
+
 
 /**
  * Represents an asynchronous Kafka route with specific input and output types.
