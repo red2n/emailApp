@@ -1,5 +1,5 @@
-import type { HttpBase } from "./httpBase.js";
-import { Route } from "./routeBase.js";
+import type { HttpBase } from "../httpBase.js";
+import { Route } from "../routeBase.js";
 /**
  * Represents an inbound synchronization route with specific types for input, return, response, and output.
  *
