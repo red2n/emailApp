@@ -72,6 +72,8 @@ export class MongoEssentials {
             });
             await client.connect().then(() => {
                 app.log.info(CONNECTED_TO_MONGODB_MESSAGE);
+            }).catch((error) => {
+                throw error;
             });
             clearTimeout(timeout);
             return client;
