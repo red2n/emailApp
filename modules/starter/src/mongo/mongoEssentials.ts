@@ -70,9 +70,10 @@ export class MongoEssentials {
             const client = new MongoClient(connectionString, {
                 serverSelectionTimeoutMS: 30000 // 30 seconds
             });
-            await client.connect();
+            await client.connect().then(() => {
+                app.log.info(CONNECTED_TO_MONGODB_MESSAGE);
+            });
             clearTimeout(timeout);
-            app.log.info(CONNECTED_TO_MONGODB_MESSAGE);
             return client;
         } catch (error) {
             if (controller.signal.aborted) {
