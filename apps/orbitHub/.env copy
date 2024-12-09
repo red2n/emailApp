@@ -1,4 +1,4 @@
 PORT=8081
-MONGO_CONNECTION_STRING=mongodb://lab-stay-backplane.westus.cloudapp.azure.com:27017/
+MONGO_CONNECTION_STRING=<mongoConnection string>
 DB_NAME=rGuestStay
-KAFKA_BROKERS=lab-stay-backplane.westus.cloudapp.azure.com:9092
+KAFKA_BROKERS=<kafka broker instance>
