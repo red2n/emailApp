@@ -6,6 +6,7 @@ import { registerRoute } from './appServerRoute.js';
 import { routes } from './routes/register.js';
 import { getConnectionString } from './utils.js';
 import type { Consumer, Producer } from 'kafkajs';
+import { UserService, VerificationService } from '@modules/gheekey';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -143,7 +144,7 @@ initialize();
 process.on('SIGINT', async () => {
   app.log.info(SHUTTING_DOWN_MESSAGE);
   try {
-    await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka,consumers, producers, app);
+    await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, consumers, producers, app);
     await app.close();
     app.log.info(SERVER_CLOSED_MESSAGE);
     process.exit(0);
