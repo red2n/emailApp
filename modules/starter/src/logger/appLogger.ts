@@ -45,7 +45,7 @@ class AppLogger {
                         target: 'pino-pretty',
                         options: {
                             colorize: true,
-                            translateTime: true,
+                            translateTime: 'yyyy-MM-dd HH:MM:ss:tt',
                             ignore: 'pid,hostname',
                             messageFormat: `[${formattedServiceName}] - {msg}`,
                         }
