@@ -1,8 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { AppServerRoute } from "../../helpers/appServerRoute.js";
 import type { HttpBase } from "../httpBase.js";
-import { Route } from "../routeBase.js";
-import type { ROUTETYPE, HttpMethod } from "../utils.js";
+import type { HttpMethod, ROUTETYPE } from "../utils.js";
 /**
  * Represents an inbound synchronization route with specific types for input, return, response, and output.
  *

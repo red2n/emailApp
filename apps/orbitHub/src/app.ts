@@ -1,13 +1,12 @@
 import {
-  AppLogger, AppServer, type HttpBase, type InboundSyns, KafkaEssentials, type KafkaInAsync, KafkaUtils, MongoEssentials, type Route,
-  AppServerRoute
+  AppLogger, AppServer, type HttpBase, type InboundSyns, KafkaEssentials, KafkaUtils, MongoEssentials
 } from '@modules/starter';
 import dotenv from 'dotenv';
 import type { FastifyInstance } from 'fastify';
+import type { Consumer, Producer } from 'kafkajs';
 import type { Collection } from 'mongodb';
 import { routes } from './routes/register.js';
 import { getConnectionString } from './utils.js';
-import type { Consumer, Producer } from 'kafkajs';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
