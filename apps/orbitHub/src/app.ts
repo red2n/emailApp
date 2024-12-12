@@ -1,12 +1,13 @@
-import { AppLogger, AppServer, type HttpBase, type InboundSyns, KafkaEssentials, type KafkaInAsync, KafkaUtils, MongoEssentials, type Route } from '@modules/starter';
+import {
+  AppLogger, AppServer, type HttpBase, type InboundSyns, KafkaEssentials, type KafkaInAsync, KafkaUtils, MongoEssentials, type Route,
+  AppServerRoute
+} from '@modules/starter';
 import dotenv from 'dotenv';
 import type { FastifyInstance } from 'fastify';
 import type { Collection } from 'mongodb';
-import { registerRoute } from './appServerRoute.js';
 import { routes } from './routes/register.js';
 import { getConnectionString } from './utils.js';
 import type { Consumer, Producer } from 'kafkajs';
-import { UserService, VerificationService } from '@modules/gheekey';
 
 const SERVICE_NAME = 'App';
 const DEFAULT_PORT = '8080';
@@ -23,77 +24,9 @@ const app: FastifyInstance = AppLogger.getLogger(SERVICE_NAME);
 AppServer.setupFastify(app);
 
 const registerHttpRoutes = async () => {
-  const kafkaRoutes: Route[] = [];
   for (const route of routes) {
-    switch (route.TYPE) {
-      case 'HTTPINBOUND': {
-        const httpRoutes = route as HttpBase;
-        const httpInstance = route as InboundSyns<any, any, any, any>;
-        app.log.info(`Registering ${httpInstance.METHOD} ${httpRoutes.ROUTE_URL}`);
-        registerRoute(app, httpInstance.METHOD, httpRoutes.ROUTE_URL, async (_request, reply) => {
-          if (typeof httpInstance.extract === 'function' && typeof httpInstance.respond === 'function') {
-            const response = await httpInstance.extract(_request);
-            if (typeof httpInstance.process === 'function') {
-              const processedResponse = await httpInstance.process(response);
-              reply.send(processedResponse);
-            } else {
-              const processedResponse = await httpInstance.respond(response);
-              reply.send(processedResponse);
-            }
-          } else {
-            reply.status(500).send({ error: 'Handler method not implemented' });
-          }
-        });
-        break;
-      }
-      case 'KAFKAINBOUND': {
-        const kafkaInstance = route as KafkaInAsync<any, any, any, any>;
-        KafkaUtils.initializeConsumer(KafkaEssentials.kafka, KafkaEssentials.kafkaConfig, kafkaInstance.topic)
-          .then((consumer) => {
-            consumers.push(consumer);
-            app.log.info(`Consumer is listening on topic: ${kafkaInstance.topic}`);
-            consumer.run({
-              eachMessage: async ({ topic, message }) => {
-                app.log.info(`Received message: ${message.value?.toString()} on topic: ${topic}`);
-                kafkaInstance.consume(message.value?.toString())
-                  .then((data) => {
-                    return kafkaInstance.process(data);
-                  })
-                  .then((data) => {
-                    kafkaInstance.produce(data);
-                  })
-                  .catch((err) => {
-                    app.log.error('Error processing message:', err);
-                  });
-              },
-            });
-          });
-
-        KafkaUtils.initializeProducer(KafkaEssentials.kafka).then((producer) => {
-          producers.push(producer);
-          kafkaInstance.produce = async (data: any) => {
-            try {
-              await producer.send({
-                topic: kafkaInstance.outTopic,
-                messages: [
-                  { value: data },
-                ],
-              });
-              app.log.info(`Message sent to topic: ${kafkaInstance.outTopic}`);
-            } catch (err) {
-              app.log.error(`Error sending message to topic: ${kafkaInstance.outTopic}`, err);
-            }
-          }
-        });
-
-        break;
-      }
-      default:
-        app.log.error(`Route type ${route.TYPE} not supported`);
-        break;
-    }
+    route.initialize(app);
   }
-  return kafkaRoutes;
 };
 
 let rGuestStayCollection: Collection;
@@ -153,3 +86,7 @@ process.on('SIGINT', async () => {
     process.exit(1);
   }
 });
+
+function registerHttp(httpInstance: InboundSyns<any, any, any, any>, httpRoutes: HttpBase) {
+
+}

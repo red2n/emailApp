@@ -9,6 +9,7 @@ import { Route } from "./routes/routeBase.js";
 import { HttpMethod, ROUTETYPE } from "./routes/utils.js";
 import { KafkaInAsync } from "./routes/kafka/kafkaInAsync.js";
 import { AppServer } from "./server/appServer.js";
+import { AppServerRoute } from "./helpers/appServerRoute.js";
 
 export { InboundSyns, KafkaInAsync }
 export { ROUTETYPE }
@@ -20,3 +21,4 @@ export { HttpBase }
 export { KafkaUtils }
 export { AppLogger }
 export { AppServer }
+export { AppServerRoute }

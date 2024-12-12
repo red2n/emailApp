@@ -1,5 +1,8 @@
+import type { FastifyInstance } from "fastify";
+import { AppServerRoute } from "../../helpers/appServerRoute.js";
 import type { HttpBase } from "../httpBase.js";
 import { Route } from "../routeBase.js";
+import type { ROUTETYPE, HttpMethod } from "../utils.js";
 /**
  * Represents an inbound synchronization route with specific types for input, return, response, and output.
  *
@@ -14,8 +17,38 @@ import { Route } from "../routeBase.js";
  * @property {function(INTERNALRETURN): INTERNALRES} [process] - An optional function that processes the extracted data.
  * @property {function(INTERNALRES): INTERNALOUT} respond - A function that generates the output response from the processed data.
  */
-export type InboundSyns<INTERNALIN, INTERNALRETURN, INTERNALRES, INTERNALOUT> = HttpBase & {
-    extract(request: INTERNALIN): Promise<INTERNALRETURN>;
+export abstract class InboundSyns<
+    INTERNALIN,
+    INTERNALRETURN,
+    INTERNALRES,
+    INTERNALOUT,
+> implements HttpBase {
+    DESCRIPTION?: string | undefined;
+    async initialize(app: FastifyInstance): Promise<void> {
+        app.log.info(`Registering ${this.METHOD} ${this.ROUTE_URL}`);
+        AppServerRoute.registerRoute(
+            app,
+            this.METHOD,
+            this.ROUTE_URL,
+            async (_request, reply) => {
+                const response = await this.extract(_request as INTERNALIN);
+                if (typeof this.process === "function") {
+                    const processedResponse = await this.process(response);
+                    reply.send(processedResponse);
+                } else {
+                    const processedResponse = await this.respond(
+                        response as unknown as INTERNALRES,
+                    );
+                    reply.send(processedResponse);
+                }
+            },
+        );
+    }
+    abstract ID: string;
+    abstract TYPE: ROUTETYPE;
+    abstract METHOD: HttpMethod;
+    abstract ROUTE_URL: string;
+    abstract extract(request: INTERNALIN): Promise<INTERNALRETURN>;
     process?(data: INTERNALRETURN): Promise<INTERNALRES>;
-    respond(response: INTERNALRES): Promise<INTERNALOUT>;
+    abstract respond(response: INTERNALRES): Promise<INTERNALOUT>;
 }
