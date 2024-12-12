@@ -1,7 +1,6 @@
-import { type KafkaInAsync, ROUTETYPE } from "@modules/starter";
+import { KafkaInAsync, ROUTETYPE } from "@modules/starter";
 
-export class NotifyWorker implements KafkaInAsync<string, string, string, string> {
-    DESCRIPTION?: string | undefined;
+export class NotifyWorker extends KafkaInAsync<string, string, string, string> {
     ID = "NOTIFY_WORKER";
     TYPE = ROUTETYPE.KAFKAINBOUND;
     topic = "net.ion.orchestrator.listen";

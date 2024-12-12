@@ -1,7 +1,7 @@
 
-import { type InboundSyns, HttpMethod, ROUTETYPE } from '@modules/starter';
+import {   HttpMethod, InboundSyns, ROUTETYPE } from '@modules/starter';
 
-export class GetCountries implements InboundSyns<Request, string[], string[], string> {
+export class GetCountries extends InboundSyns<Request, string[], string[], string> {
     ID = 'GET_COUNTRIES';
     ROUTE_URL = '/countries';
     METHOD = HttpMethod.GET;

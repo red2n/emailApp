@@ -1,3 +1,4 @@
+import type { FastifyInstance } from "fastify";
 import type { ROUTETYPE } from "./utils.js";
 
 /**
@@ -18,4 +19,6 @@ export type Route = {
      * A description of the route.
      */
     DESCRIPTION?: string;
+
+    initialize(app: FastifyInstance): Promise<void>;
 }
