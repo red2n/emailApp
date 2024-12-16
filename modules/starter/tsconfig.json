@@ -16,6 +16,6 @@
     "entryPoints": [
       "src/**/*.ts"
     ],
-    "out": "../../docs/module"
+    "out": "../../docs"
   }
 }

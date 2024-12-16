@@ -19,6 +19,18 @@ export class KafkaUtils {
      * @param kafkaConfig - Configuration settings for the Kafka consumer, including the groupId.
      * @param topic - The topic to which the consumer should subscribe.
      * @returns A promise that resolves to the initialized Kafka consumer.
+     * 
+     * @example 
+     * ```typescript
+     * const consumer = await KafkaUtils.initializeConsumer(kafka, kafkaConfig, 'my-topic');
+     * consumer.run({
+     *  eachMessage: async ({ topic, partition, message }) => {
+     *   console.log({
+     *    value: message.value.toString(),
+     *  });
+     * }
+     * });
+     * ```
      */
     static async initializeConsumer(kafka: Kafka, kafkaConfig: KafkaConfig, topic: string): Promise<Consumer> {
         const consumer = kafka.consumer({ groupId: kafkaConfig.groupId });
@@ -32,6 +44,17 @@ export class KafkaUtils {
      *
      * @param {Kafka} kafka - The Kafka instance to use for creating the producer.
      * @returns {Promise<Producer>} A promise that resolves to the connected Kafka producer.
+     * 
+     * @example
+     * ```typescript
+     * const producer = await KafkaUtils.initializeProducer(kafka);
+     * await producer.send({
+     * topic: 'my-topic',
+     * messages: [
+     *  { value: 'Hello KafkaJS user!' },
+     * ],
+     * });
+     * ```
      */
     static async initializeProducer(kafka: Kafka): Promise<Producer> {
         const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
@@ -49,6 +72,11 @@ export class KafkaUtils {
      * @returns A promise that resolves when both the consumer and producer are disconnected.
      *
      * @throws Will log an error if there is an issue disconnecting the consumer or producer.
+     * 
+     * @example
+     * ```typescript
+     * await KafkaUtils.disconnectFromKafka(kafka, consumers, producers, app);
+     * ```
      */
     static async disconnectFromKafka(kafka: Kafka, consumers: Consumer[], producers: Producer[], app: FastifyInstance) {
         try {

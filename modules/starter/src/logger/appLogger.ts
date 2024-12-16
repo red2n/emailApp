@@ -35,6 +35,14 @@ class AppLogger {
      * If the logger instance does not already exist, it is created and configured.
      * @param SERVICE_NAME - The name of the service for which the logger is being created.
      * @returns The Fastify logger instance.
+     * 
+     * @example
+     * ```typescript
+     * 
+     * const logger = AppLogger.getLogger('MyService');
+     * logger.info('This is an info message');
+     * logger.error('This is an error message');    
+     * ```
      */
     public static getLogger(SERVICE_NAME: string): fastify.FastifyInstance {
         if (!AppLogger.fastifyInstance) {

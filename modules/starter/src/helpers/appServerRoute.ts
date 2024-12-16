@@ -16,6 +16,13 @@ export class AppServerRoute {
    * @param method - The HTTP method for the route (e.g., 'GET', 'POST', 'PUT', 'DELETE').
    * @param path - The URL path for the route.
    * @param handler - The handler function to process requests to the route.
+   * 
+   * @example
+   * ```typescript
+   * AppServerRoute.registerRoute(app, 'GET', '/hello', async (request, reply) => {
+   *  reply.send({ message: 'Hello, world!' });
+   * });
+   * ```
    */
   static registerRoute(
     app: FastifyInstance,

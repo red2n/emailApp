@@ -14,7 +14,7 @@ import type { HttpMethod, ROUTETYPE } from "../utils.js";
  *
  * @property {function(INTERNALIN): INTERNALRETURN} extract - A function that extracts data from the input request.
  * @property {function(INTERNALRETURN): INTERNALRES} [process] - An optional function that processes the extracted data.
- * @property {function(INTERNALRES): INTERNALOUT} respond - A function that generates the output response from the processed data.
+ * @property {function(INTERNALRES): INTERNALOUT} respond - A function that generates the output response from the processed data. 
  */
 export abstract class InboundSyns<
     INTERNALIN,
