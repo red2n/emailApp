@@ -20,6 +20,20 @@ import type { ROUTETYPE } from "../utils.js";
  * @property {(request: INTERNALIN) => INTERNALRETURN} consume - Function to consume and process the input data.
  * @property {(data: INTERNALRETURN) => INTERNALOUT} process - Function to process the consumed data.
  * @property {(data: INTERNALOUT) => EXTERNALOUT} produce - Function to produce the final output data.
+ * 
+ * 
+ * @example
+ * ```typescript
+ * 
+ * import { KafkaInAsync } from '@modules/starter';
+ * import { FastifyInstance } from 'fastify';
+ * 
+ * export class MyKafkaRoute extends KafkaInAsync<string, string, string, string> {
+ *  ID = 'MyKafkaRoute';
+ *  TYPE = ROUTETYPE.KAFKA;
+ *  topic = 'my-topic';
+ *  outTopic = 'my-out-topic';
+ *``` 
  */
 export abstract class KafkaInAsync<INTERNALIN, INTERNALRETURN, INTERNALOUT, EXTERNALOUT> implements Route {
     DESCRIPTION?: string | undefined;

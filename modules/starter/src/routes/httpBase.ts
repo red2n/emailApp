@@ -8,6 +8,14 @@ import type { HttpMethod } from "./utils.js";
  * 
  * @property {HttpMethod} METHOD - The HTTP method used by the route (e.g., GET, POST).
  * @property {string} ROUTE_URL - The URL path of the route.
+ * 
+ * @example
+ * ```typescript
+ * import { HttpBase } from "./httpBase.js";
+ * export class MyRoute extends HttpBase {
+ *    METHOD = "GET";
+ *   ROUTE_URL = "/my-route";
+ * ```
  */
 export type HttpBase = Route & {
     /**

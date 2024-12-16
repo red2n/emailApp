@@ -12,8 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": " node --loader ts-node/esm src/app.ts",
     "starti": "npx ts-node --require ./instrumentation.ts ./src/app.ts",
-    "clean": "npx rimraf ./dist ./node_modules ./coverage ./docs",
-    "docs": "typedoc"
+    "clean": "npx rimraf ./dist ./node_modules ./coverage ./docs"
   },
   "keywords": [],
   "author": "net.navinkumar",

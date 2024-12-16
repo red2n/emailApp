@@ -115,6 +115,15 @@ export class AppServer {
    * @param app - The Fastify instance to start.
    * @param port - The port number on which the server should listen.
    * @throws Will log an error and exit the process if the server fails to start.
+   * 
+   * @example 
+   * ```typescript
+   * import fastify from 'fastify';
+   * import { AppServer } from './appServer';
+   * 
+   * const app = fastify();
+   * AppServer.setupFastify(app);
+   * ```
    */
   static async startFastify(app: FastifyInstance, port: number) {
     try {
