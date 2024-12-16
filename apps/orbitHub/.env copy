@@ -1,4 +1,4 @@
 PORT=8081
 MONGO_CONNECTION_STRING=<mongoConnection string>
-DB_NAME=rGuestStay
+DB_NAME=<DBNAME>
 KAFKA_BROKERS=<kafka broker instance>
