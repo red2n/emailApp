@@ -35,7 +35,7 @@ class App {
     }
   }
 
-  private async initialize(PORT: number) {
+  private async initialize(PORT: number): Promise<void> {
     try {
       const connectionString = getConnectionString();
       const client = await MongoEssentials.connectToMongoDB(connectionString);

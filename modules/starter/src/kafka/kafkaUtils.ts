@@ -78,7 +78,7 @@ export class KafkaUtils {
      * await KafkaUtils.disconnectFromKafka(kafka, consumers, producers, app);
      * ```
      */
-    static async disconnectFromKafka(kafka: Kafka, consumers: Consumer[], producers: Producer[], app: FastifyInstance) {
+    static async disconnectFromKafka(kafka: Kafka, consumers: Consumer[], producers: Producer[], app: FastifyInstance): Promise<void> {
         try {
             app.log.info('Disconnecting consumers and producers...');
             await Promise.all(consumers.map(consumer => consumer.disconnect().then(() => {

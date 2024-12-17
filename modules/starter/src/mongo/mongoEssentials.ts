@@ -46,7 +46,7 @@ export class MongoEssentials {
      * const client = await MongoEssentials.connectToMongoDB('mongodb://localhost:27017/mydb');
      * ```
      */
-    static async connectToMongoDB(connectionString: string) {
+    static async connectToMongoDB(connectionString: string): Promise<MongoClient> {
         const app: FastifyInstance = AppLogger.getLogger(MongoEssentials.name);
 
         if (!connectionString) {
