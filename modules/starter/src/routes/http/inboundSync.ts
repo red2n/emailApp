@@ -15,6 +15,19 @@ import type { HttpMethod, ROUTETYPE } from "../utils.js";
  * @property {function(INTERNALIN): INTERNALRETURN} extract - A function that extracts data from the input request.
  * @property {function(INTERNALRETURN): INTERNALRES} [process] - An optional function that processes the extracted data.
  * @property {function(INTERNALRES): INTERNALOUT} respond - A function that generates the output response from the processed data. 
+ * 
+ * @example
+ * ```typescript
+ * 
+ * import { InboundSyncRoute } from '@modules/starter';
+ * import { FastifyInstance } from 'fastify';
+ * 
+ * class InboundSyncRoute extends InboundSyns<K,X,Y,Z> {
+ * ID = 'InboundSyncRoute';
+ * TYPE = ROUTETYPE.HTTP;
+ * METHOD = 'POST';
+ * ROUTE_URL = '/inbound-sync';
+ * ``` 
  */
 export abstract class InboundSyns<
     INTERNALIN,

@@ -64,7 +64,7 @@ export class AppServer {
    * });
    * ```
    */
-  static setupFastify(app: FastifyInstance) {
+  static setupFastify(app: FastifyInstance): FastifyInstance {
     let lastActivityTime = Date.now();
     let totalIdleTime = 0;
 
@@ -125,7 +125,7 @@ export class AppServer {
    * AppServer.setupFastify(app);
    * ```
    */
-  static async startFastify(app: FastifyInstance, port: number) {
+  static async startFastify(app: FastifyInstance, port: number): Promise<void> {
     try {
       await app.listen({ port });
     } catch (err) {
