@@ -3,8 +3,6 @@ import { KafkaEssentials } from "../../kafka/kafkaEssentials.js";
 import { KafkaUtils } from "../../kafka/kafkaUtils.js";
 import type { Route } from "../routeBase.js";
 import type { ROUTETYPE } from "../utils.js";
-
-
 /**
  * Represents an asynchronous Kafka route with specific input and output types.
  *
@@ -21,14 +19,13 @@ import type { ROUTETYPE } from "../utils.js";
  * @property {(data: INTERNALRETURN) => INTERNALOUT} process - Function to process the consumed data.
  * @property {(data: INTERNALOUT) => EXTERNALOUT} produce - Function to produce the final output data.
  * 
- * 
  * @example
  * ```typescript
  * 
  * import { KafkaInAsync } from '@modules/starter';
  * import { FastifyInstance } from 'fastify';
  * 
- * export class MyKafkaRoute extends KafkaInAsync<string, string, string, string> {
+ * export class MyKafkaRoute extends KafkaInAsync<K, X, Y, Z> {
  *  ID = 'MyKafkaRoute';
  *  TYPE = ROUTETYPE.KAFKA;
  *  topic = 'my-topic';
