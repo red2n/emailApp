@@ -79,7 +79,9 @@ class App {
     process.on('SIGINT', async () => {
       this.app.log.info(App.SHUTTING_DOWN_MESSAGE);
       try {
-        await KafkaUtils.disconnectFromKafka(KafkaEssentials.kafka, this.consumers, this.producers, this.app);
+        for (const route of routes) {
+          route.uninitialize(this.app);
+        }
         await this.app.close();
         this.app.log.info(App.SERVER_CLOSED_MESSAGE);
         process.exit(0);
