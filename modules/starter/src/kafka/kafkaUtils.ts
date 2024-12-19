@@ -62,40 +62,40 @@ export class KafkaUtils {
         return producer;
     }
 
-    /**
-     * Disconnects the consumer and producer from Kafka.
-     *
-     * @param kafka - The Kafka instance to disconnect from.
-     * @param kafkaConfig - The configuration object for Kafka, containing the groupId.
-     * @param app - The Fastify instance used for logging.
-     *
-     * @returns A promise that resolves when both the consumer and producer are disconnected.
-     *
-     * @throws Will log an error if there is an issue disconnecting the consumer or producer.
-     * 
-     * @example
-     * ```typescript
-     * await KafkaUtils.disconnectFromKafka(kafka, consumers, producers, app);
-     * ```
-     */
-    static async disconnectFromKafka(kafka: Kafka, consumers: Consumer[], producers: Producer[], app: FastifyInstance): Promise<void> {
-        try {
-            app.log.info('Disconnecting consumers and producers...');
-            await Promise.all(consumers.map(consumer => consumer.disconnect().then(() => {
-                app.log.info('Successfully disconnected all consumers from Kafka.');
-            })));
-            await Promise.all(producers.map(producer => producer.disconnect().then(() => {
-                app.log.info('Successfully disconnected all producers from Kafka.');
-            })));
-            app.log.info('Disconnecting from Kafka...');
-            await kafka.admin().disconnect().then(() => {
-                app.log.info('Successfully disconnected from Kafka.');
-            }).catch((err) => {
-                app.log.error('Error disconnecting from Kafka:', err);
-            });
+    // /**
+    //  * Disconnects the consumer and producer from Kafka.
+    //  *
+    //  * @param kafka - The Kafka instance to disconnect from.
+    //  * @param kafkaConfig - The configuration object for Kafka, containing the groupId.
+    //  * @param app - The Fastify instance used for logging.
+    //  *
+    //  * @returns A promise that resolves when both the consumer and producer are disconnected.
+    //  *
+    //  * @throws Will log an error if there is an issue disconnecting the consumer or producer.
+    //  * 
+    //  * @example
+    //  * ```typescript
+    //  * await KafkaUtils.disconnectFromKafka(kafka, consumers, producers, app);
+    //  * ```
+    //  */
+    // static async disconnectFromKafka(kafka: Kafka, consumers: Consumer[], producers: Producer[], app: FastifyInstance): Promise<void> {
+    //     try {
+    //         app.log.info('Disconnecting consumers and producers...');
+    //         await Promise.all(consumers.map(consumer => consumer.disconnect().then(() => {
+    //             app.log.info('Successfully disconnected all consumers from Kafka.');
+    //         })));
+    //         await Promise.all(producers.map(producer => producer.disconnect().then(() => {
+    //             app.log.info('Successfully disconnected all producers from Kafka.');
+    //         })));
+    //         app.log.info('Disconnecting from Kafka...');
+    //         await kafka.admin().disconnect().then(() => {
+    //             app.log.info('Successfully disconnected from Kafka.');
+    //         }).catch((err) => {
+    //             app.log.error('Error disconnecting from Kafka:', err);
+    //         });
 
-        } catch (err) {
-            app.log.error('Error disconnecting from Kafka:', err);
-        }
-    }
+    //     } catch (err) {
+    //         app.log.error('Error disconnecting from Kafka:', err);
+    //     }
+    // }
 }

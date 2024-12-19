@@ -35,6 +35,9 @@ export abstract class InboundSyns<
     INTERNALRES,
     INTERNALOUT,
 > implements HttpBase {
+    uninitialize(app: FastifyInstance): Promise<void> {
+        return Promise.resolve();
+    }
     DESCRIPTION?: string | undefined;
     async initialize(app: FastifyInstance): Promise<void> {
         app.log.info(`Registering ${this.METHOD} ${this.ROUTE_URL}`);

@@ -35,4 +35,5 @@ export type Route = {
     DESCRIPTION?: string;
 
     initialize(app: FastifyInstance): Promise<void>;
+    uninitialize(app: FastifyInstance): Promise<void>;
 }
